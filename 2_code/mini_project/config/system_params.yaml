@@ -1,0 +1,8 @@
+sensor_node:
+  ros__parameters:
+    publish_rate: 1.0
+    max_value: 10.0
+
+processor_node:
+  ros__parameters:
+    threshold: 7.0

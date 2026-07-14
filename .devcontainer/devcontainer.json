@@ -1,0 +1,38 @@
+{
+  "name": "ROS2 Jazzy Course",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "options": ["--network=host"]
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "remoteUser": "ubuntu",
+  "postCreateCommand": "bash -lc 'source /opt/ros/jazzy/setup.bash'",
+  "mounts": [
+    "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
+  ],
+  "runArgs": [
+    "--network=host",
+    "--shm-size=1g"
+  ],
+  "containerEnv": {
+    "QT_X11_NO_MITSHM": "1",
+    "DISPLAY": "${localEnv:DISPLAY}"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/bin/python3"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-iot.vscode-ros",
+        "DotJoshJohnson.xml",
+        "mechatroner.rainbow-csv"
+      ]
+    }
+  }
+}

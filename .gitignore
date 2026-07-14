@@ -1,0 +1,83 @@
+# --- Установленные пакеты (Chrome binary) ---
+Robot/Home_Robot/Presentation/chrome/
+
+# --- node_modules ---
+node_modules/
+
+# --- Изображения (только бинарные — SVG оставлен) ---
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.ico
+
+# --- Презентации ---
+*.ppt
+*.pptx
+*.odp
+
+# --- PDF ---
+*.pdf
+
+# --- Медиа (видео/аудио) ---
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.mp3
+*.wav
+
+# --- Архивы ---
+*.zip
+*.tar.gz
+*.tar
+*.7z
+*.rar
+
+# --- Python cache ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# =============================================================================
+# TIAGo Robot (Robot/TIAgo_humble/ros2_ws)
+# Сборка только внутри DevContainer — исходники клонируются, артефакты генерируются
+# =============================================================================
+
+# Исходные коды 19 ROS2-пакетов (~230 MB)
+# Клонируются из GitHub PAL Robotics через vcs import при сборке DevContainer.
+# Каждый пакет — отдельный git-репозиторий, хранить в корневом репозитории нельзя.
+Robot/TIAgo_humble/ros2_ws/src/
+
+# Результат colcon build — объектные файлы, бинарники, библиотеки.
+# Генерируется заново при каждой сборке (colcon build). Не участвует в разработке.
+Robot/TIAgo_humble/ros2_ws/build/
+
+# Установленные пакеты — setup.bash, .cmake, .so.
+# Генерируется заново при colcon build. Не участвует в разработке.
+Robot/TIAgo_humble/ros2_ws/install/
+
+# Логи сборки colcon.
+# Генерируются автоматически. Не влияют на работу.
+Robot/TIAgo_humble/ros2_ws/log/
+
+# Лок-файл DevContainer — сгенерённый хеш Docker-образа.
+# Создаётся автоматически при первой сборке контейнера.
+Robot/TIAgo_humble/.devcontainer/devcontainer-lock.json
+
+# Gitfile — файл .git (не директория), указывающий на корневой репозиторий
+# Нужен, чтобы VS Code не предлагал открыть родительский репозиторий
+# при запуске DevContainer из подпапки TIAgo_humble
+Robot/TIAgo_humble/.git
+
+# --- Редакторы и ОС ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/

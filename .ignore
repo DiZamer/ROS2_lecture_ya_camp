@@ -1,0 +1,7 @@
+!some_data/
+!opencode_files/
+
+# Артефакты сборки ROS2 — пересоздаются внутри DevContainer
+3_Robot/TIAgo_humble/ros2_ws/build/
+3_Robot/TIAgo_humble/ros2_ws/install/
+3_Robot/TIAgo_humble/ros2_ws/log/

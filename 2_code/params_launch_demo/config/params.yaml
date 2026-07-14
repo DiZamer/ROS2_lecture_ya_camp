@@ -1,0 +1,4 @@
+timed_talker:
+  ros__parameters:
+    publish_rate: 2.0
+    message_prefix: "Tick"

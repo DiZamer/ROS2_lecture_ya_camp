@@ -1,0 +1,1 @@
+# Integration mini-project: sensor, processor, alarm server, task server

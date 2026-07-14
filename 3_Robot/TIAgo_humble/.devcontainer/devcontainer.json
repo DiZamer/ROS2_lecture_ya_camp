@@ -1,0 +1,99 @@
+{
+  "name": "TIAGo Humble",
+
+  // ═══════════════════════════════════════════════════════════════
+  // Общие настройки (не зависят от способа вывода GUI)
+  // ═══════════════════════════════════════════════════════════════
+
+  "image": "tiago_humble:gpu",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "remoteUser": "ubuntu",
+  "postCreateCommand": "bash -lc '\
+    source /opt/ros/humble/setup.bash && \
+    WS=/workspaces/${localWorkspaceFolderBasename}/ros2_ws && \
+    mkdir -p $WS/src && \
+    if [ ! -d \"$WS/src/tiago_simulation\" ]; then \
+      echo \"=== Cloning TIAGo repositories... ===\" && \
+      vcs import $WS/src < $WS/tiago.repos && \
+      echo \"=== Fetching external packages not available via apt... ===\" && \
+      bash $WS/fetch_external.sh $WS/src && \
+      echo \"=== Installing dependencies... ===\" && \
+      sudo apt-get update && \
+      rosdep update && \
+      rosdep install --from-paths $WS/src --ignore-src -r -y && \
+      echo \"=== Building TIAGo workspace... ===\" && \
+      cd $WS && colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release; \
+    fi && \
+    grep -qxF \"source $WS/install/setup.bash\" ~/.bashrc || echo \"source $WS/install/setup.bash\" >> ~/.bashrc \
+  '",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/bin/python3"
+      },
+      "extensions": [
+        "ms-python.debugpy",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.vscode-python-envs",
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "DotJoshJohnson.xml",
+        "mechatroner.rainbow-csv",
+        "ms-iot.vscode-ros",
+        "Ranch-Hand-Robotics.rde-pack"
+      ]
+    }
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // Настройка вывода GUI — активен ВАРИАНТ 5 (Ubuntu X11 + NVIDIA GPU)
+  // ═══════════════════════════════════════════════════════════════
+  //
+  // Подтверждено: nvidia-smi из контейнера видит RTX 5060.
+  // Прямой X11 на DISPLAY=:1 через --network=host.
+  // Gazebo использует аппаратный рендеринг GPU (без LIBGL_ALWAYS_SOFTWARE).
+  //
+  // Перед запуском на хосте: xhost +local:docker
+
+  // ───────────────────────────────────────────────────────────────
+  // ВАРИАНТ 1: Виртуальный дисплей (VNC/браузер) — отключён
+  // ───────────────────────────────────────────────────────────────
+  // "runArgs": [
+  //   "--privileged",
+  //   "--shm-size=1g",
+  //   "-p", "5900:5900"
+  // ],
+  // "containerEnv": {
+  //   "QT_X11_NO_MITSHM": "1",
+  //   "LIBGL_ALWAYS_SOFTWARE": "1",
+  //   "DISPLAY": ":99",
+  //   "ROS_LOCALHOST_ONLY": "1"
+  // },
+  // "forwardPorts": [6080, 5900],
+
+  // ───────────────────────────────────────────────────────────────
+  // ВАРИАНТ 5: Прямой X11 — Ubuntu + NVIDIA GPU
+  // ───────────────────────────────────────────────────────────────
+  // Требования на хосте (однократно):
+  //   nvidia-container-toolkit + native Docker Engine (docker-ce)
+  //   docker context use default
+  //   xhost +local:docker
+
+  "mounts": [
+    "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
+  ],
+  "runArgs": [
+    "--privileged",
+    "--network=host",
+    "--shm-size=1g",
+    "--gpus", "all"
+  ],
+  "containerEnv": {
+    "QT_X11_NO_MITSHM": "1",
+    "DISPLAY": ":1",
+    "MESA_LOADER_DRIVER_OVERRIDE": "zink"
+  },
+  "forwardPorts": []
+}

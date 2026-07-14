@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TIAGo Simulation</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="app/styles/lite.css">
+  <script src="vendor/promise.js"></script>
+  <script type="module" crossorigin="anonymous">
+    import * as WebUtil from './app/webutil.js';
+    import RFB from './core/rfb.js';
+
+    var rfb;
+    var desktopName;
+
+    WebUtil.init_logging('warn');
+
+    var host = WebUtil.getConfigVar('host', window.location.hostname);
+    var port = WebUtil.getConfigVar('port', window.location.port) || 80;
+    var password = WebUtil.getConfigVar('password', '');
+    var path = WebUtil.getConfigVar('path', 'websockify');
+    var encrypt = WebUtil.getConfigVar('encrypt', window.location.protocol === 'https:');
+
+    status('Connecting...', 'normal');
+
+    var proto = encrypt ? 'wss' : 'ws';
+    var url = proto + '://' + host;
+    if (port) url += ':' + port;
+    url += '/' + path;
+
+    rfb = new RFB(document.body, url, {
+      repeaterID: WebUtil.getConfigVar('repeaterID', ''),
+      shared: true,
+      credentials: { password: password }
+    });
+
+    rfb.viewOnly = false;
+    rfb.scaleViewport = true;
+    rfb.resizeSession = true;
+
+    rfb.addEventListener('connect', function () {
+      rfb.scaleViewport = true;
+      rfb.resizeSession = true;
+      var name = desktopName ? ' to ' + desktopName : '';
+      status('Connected' + name, 'normal');
+      document.getElementById('ctrlAltDel').disabled = false;
+    });
+
+    rfb.addEventListener('disconnect', function (e) {
+      document.getElementById('ctrlAltDel').disabled = true;
+      status(e.detail.clean ? 'Disconnected' : 'Connection error', e.detail.clean ? 'normal' : 'error');
+    });
+
+    rfb.addEventListener('credentialsrequired', function () {
+      var pass = prompt('Password required:');
+      if (pass) rfb.sendCredentials({ password: pass });
+    });
+
+    rfb.addEventListener('desktopname', function (e) {
+      desktopName = e.detail.name;
+    });
+
+    function status(text, level) {
+      var bar = document.getElementById('statusBar');
+      var label = document.getElementById('statusLabel');
+      bar.className = 'noVNC_status_' + level;
+      label.textContent = text;
+    }
+
+    window.sendCtrlAltDel = function () {
+      rfb.sendCtrlAltDel();
+    };
+  </script>
+  <style>
+    body { margin: 0; padding: 0; overflow: hidden; background: #000; }
+    #statusBar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 12px; font: 13px/1.4 sans-serif;
+    }
+    #statusBar.noVNC_status_normal { background: #2e7d32; color: #fff; }
+    #statusBar.noVNC_status_warn   { background: #f57f17; color: #fff; }
+    #statusBar.noVNC_status_error  { background: #c62828; color: #fff; }
+    #ctrlAltDel {
+      background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+      color: #fff; padding: 2px 10px; border-radius: 3px; cursor: pointer;
+      font: 12px/1.4 sans-serif;
+    }
+    #ctrlAltDel:disabled { opacity: 0.4; cursor: default; }
+    #ctrlAltDel:hover:not(:disabled) { background: rgba(255,255,255,0.3); }
+  </style>
+</head>
+<body>
+  <div id="statusBar">
+    <span id="statusLabel">Loading</span>
+    <button id="ctrlAltDel" onclick="sendCtrlAltDel()" disabled>Ctrl+Alt+Del</button>
+  </div>
+</body>
+</html>
