@@ -74,12 +74,7 @@ ros2 run demo_nodes_cpp talker
 - Код и команды работают при копировании без изменений
 - Все нетривиальные утверждения имеют ссылку на источник
 
-## Документы проекта
+## Материалы по лекции
 
-- [`COURSE_ARCHITECTURE.md`](COURSE_ARCHITECTURE.md) — архитектура курса, тайминг, связи материалов
-- [`1_lecture/lecture_content.md`](1_lecture/lecture_content.md) — содержательная спецификация всех 18 блоков
-- [`CONTENT_TEMPLATES.md`](CONTENT_TEMPLATES.md) — шаблоны для статей, практик, демонстраций
-- [`TERMINOLOGY.md`](TERMINOLOGY.md) — единый словарь терминов и аналогий
-- [`VISUAL_GUIDE.md`](VISUAL_GUIDE.md) — правила схем и диаграмм
-- [`QUALITY_CHECKLIST.md`](QUALITY_CHECKLIST.md) — критерии готовности материалов
-- [`ROADMAP.md`](ROADMAP.md) — порядок разработки курса
+Видео лекции: https://vkvideo.ru/video-49378_456239328
+
